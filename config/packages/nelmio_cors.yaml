@@ -1,0 +1,20 @@
+nelmio_cors:
+    defaults:
+        origin_regex: false
+        # Vite utilise souvent le port 5173 ; le README mentionne 3000 — les deux sont autorisés
+        allow_origin:
+            - 'http://localhost:3000'
+            - 'http://127.0.0.1:3000'
+
+        allow_credentials: true
+        allow_methods: ['GET', 'OPTIONS', 'POST', 'PUT', 'PATCH', 'DELETE']
+        allow_headers: ['Content-Type', 'Authorization', 'X-Requested-With']
+        expose_headers: ['Link', 'Set-Cookie']
+        max_age: 3600
+    paths:
+        '^/api':
+            allow_origin:
+                - 'http://localhost:3000'
+                - 'http://127.0.0.1:3000'
+
+            allow_credentials: true

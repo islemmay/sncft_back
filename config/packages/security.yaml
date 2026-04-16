@@ -1,0 +1,50 @@
+security:
+    password_hashers:
+        Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface: 'auto'
+
+    providers:
+        app_user_provider:
+            entity:
+                class: App\Entity\Utilisateur
+                property: email
+
+    firewalls:
+        dev:
+            pattern: ^/(_profiler|_wdt|assets|build)/
+            security: false
+        main:
+            lazy: true
+            provider: app_user_provider
+            json_login:
+                check_path: /api/login
+                username_path: email
+                password_path: password
+                success_handler: App\Security\LoginSuccessHandler
+                failure_handler: App\Security\LoginFailureHandler
+            logout:
+                path: /api/logout
+                enable_csrf: false
+            stateless: false
+
+    role_hierarchy:
+        ROLE_ADMIN: [ROLE_AGENT, ROLE_RESPONSABLE, ROLE_USER]
+        ROLE_AGENT: [ROLE_USER]
+        ROLE_RESPONSABLE: [ROLE_USER]
+
+    access_control:
+        - { path: ^/api/register, roles: PUBLIC_ACCESS }
+        - { path: ^/api/login, roles: PUBLIC_ACCESS }
+        - { path: ^/api/users, roles: ROLE_ADMIN }
+        - { path: ^/api/logs, roles: ROLE_ADMIN }
+        - { path: ^/api/statistiques, roles: ROLE_RESPONSABLE }
+        - { path: ^/api/statistics, roles: ROLE_RESPONSABLE }
+        - { path: ^/api, roles: IS_AUTHENTICATED_FULLY }
+
+when@test:
+    security:
+        password_hashers:
+            Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface:
+                algorithm: auto
+                cost: 4
+                time_cost: 3
+                memory_cost: 10
